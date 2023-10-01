@@ -3,6 +3,8 @@ pragma solidity 0.8.20;
 import '../libs/SafeMath.sol';
 import '../IERC20.sol';
 
+import 'woke/console.sol';
+
 contract UniswapV2ERC20 {
     using SafeMath for uint;
 
@@ -61,6 +63,7 @@ contract UniswapV2ERC20 {
     }
 
     function approve(address spender, uint value) external returns (bool) {
+        console.log("approval");
         _approve(msg.sender, spender, value);
         return true;
     }

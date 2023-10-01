@@ -49,8 +49,8 @@ def test():
 
     with chain.snapshot_and_revert():
         acc_token0.approve(acc_router, 2 ** 256 - 1)
-        acc_router.quote(10 * 10 ** 18, 10 * 10 ** 18, 10 * 10 ** 18,
-                         request_type='tx')
+        # acc_router.quote(10 * 10 ** 18, 10 * 10 ** 18, 10 * 10 ** 18,
+                         # request_type='tx')
         print(chain.blocks[-1].transactions[-1])
         acc_router.swapExactTokensForTokens(
             10 * 10 ** 18,
