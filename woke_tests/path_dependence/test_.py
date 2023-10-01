@@ -7,7 +7,7 @@ from pytypes.woke_tests.mocks.Factory import Factory
 
 # launch a new development chain (Anvil)
 @chain.connect()
-def test():
+def main():
     # token0 candidate
     token0_cand = ERC20.deploy(_totalSupply = 100 * 10 ** 18, from_ = chain.accounts[0])
     # token1 candidate
