@@ -63,7 +63,6 @@ contract UniswapV2ERC20 {
     }
 
     function approve(address spender, uint value) external returns (bool) {
-        console.log("approval");
         _approve(msg.sender, spender, value);
         return true;
     }

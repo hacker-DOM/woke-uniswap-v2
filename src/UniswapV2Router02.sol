@@ -231,6 +231,7 @@ contract UniswapV2Router02 {
     ) external virtual ensure(deadline) returns (uint[] memory amounts) {
         console.log("swapExactTokensForTokens");
         amounts = UniswapV2Library.getAmountsOut(factory, amountIn, path);
+        console.log("swapExactTokensForTokens");
         console.log(amounts[amounts.length - 1], amountOutMin);
         require(amounts[amounts.length - 1] >= amountOutMin, 'UniswapV2Router: INSUFFICIENT_OUTPUT_AMOUNT');
         TransferHelper.safeTransferFrom(
@@ -397,8 +398,7 @@ contract UniswapV2Router02 {
     }
 
     // **** LIBRARY FUNCTIONS ****
-    function quote(uint amountA, uint reserveA, uint reserveB) public view virtual returns (uint amountB) {
-        console.log("quote");
+    function quote(uint amountA, uint reserveA, uint reserveB) public pure virtual returns (uint amountB) {
         return UniswapV2Library.quote(amountA, reserveA, reserveB);
     }
 
