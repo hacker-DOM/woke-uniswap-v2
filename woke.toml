@@ -1,0 +1,2 @@
+[compiler.solc]
+optimizer = { enabled = true, runs = 200 }
