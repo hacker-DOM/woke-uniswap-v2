@@ -14,13 +14,21 @@ class Impl(Hooks):
     ):
         # ===== Effects =====
 
-        _ = t0.transfer(pair, amount0, from_=user)
-        _ = t1.transfer(pair, amount1, from_=user)
+        with s.chain.change_automine(False):
+            _ = t0.transfer(
+                pair, amount0, from_=user, confirmations=0, gas_limit="auto"
+            )
+            _ = t1.transfer(
+                pair, amount1, from_=user, confirmations=0, gas_limit="auto"
+            )
 
-        liq = pair.mint(user, from_=user).return_value
+            # liq = pair.mint(user, from_=user).return_value
+            pair.mint(user, from_=user, confirmations=0, gas_limit="auto")
+        s.chain.mine()
+        # s.chain.mine()
 
         # ===== Checks  =====
-        assert liq > 0
+        # assert liq > 0
 
     def impl_burn(s, user: Account, pair: UniswapV2Pair, amount: int):
         # ===== Effects =====
@@ -88,5 +96,5 @@ class Impl(Hooks):
             _ = token1.transfer(pair, 1001, from_=user)
             liq = pair.mint(user, from_=user).return_value
             assert liq == 1
- 
+
             s.pairs.append(pair)

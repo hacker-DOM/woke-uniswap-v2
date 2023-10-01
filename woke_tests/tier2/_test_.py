@@ -18,7 +18,7 @@ def tx_callback(tx: TransactionAbc):
     print("\n")
 
     with open(csv, 'a') as f:
-        f.write(f",,,{tx.block_number},{tx.from_},{tx.to},{tx.return_value},{tx.events},{tx.console_logs}\n")
+        f.write(f",,,{tx.block_number},{tx.block.timestamp},{tx.from_},{tx.to},{tx.return_value},{tx.events},{tx.console_logs}\n")
 
 @default_chain.connect()
 @on_revert(on_revert_handler)

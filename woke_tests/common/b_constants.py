@@ -6,7 +6,7 @@ This file contains all the constants used in the project.
 
 csv = plib.Path('gitignore/flows_and_txns.csv')
 # this overwrites the file
-_ = csv.write_text('sequence_number,flow_number,flow_name,block_number,from,to,return_value,events,console_logs\n')
+_ = csv.write_text('sequence_number,flow_number,flow_name,block_number,block_timestamp,from,to,return_value,events,console_logs\n')
 # with csv.open('w') as f:
 #     _ = f.write('sequence_number,flow_number,flow_name,block_number,from,to,return_value,events,console_logs\n')
 
