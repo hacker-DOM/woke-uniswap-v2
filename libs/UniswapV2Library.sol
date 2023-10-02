@@ -1,8 +1,10 @@
 pragma solidity 0.8.20;
 
+import '../src/UniswapV2Factory.sol';
 import '../src/UniswapV2Pair.sol';
 
 import "./SafeMath.sol";
+import 'woke/console.sol';
 
 library UniswapV2Library {
     using SafeMath for uint;
@@ -15,21 +17,26 @@ library UniswapV2Library {
     }
 
     // calculates the CREATE2 address for a pair without making any external calls
-    function pairFor(address factory, address tokenA, address tokenB) internal pure returns (address pair) {
+    function pairFor(address factory, address tokenA, address tokenB) internal view returns (address pair) {
+        console.log('pairFor beginning', factory, tokenA, tokenB);
         (address token0, address token1) = sortTokens(tokenA, tokenB);
-        pair = address(uint160(uint(keccak256(abi.encodePacked(
-                hex'ff',
-                factory,
-                keccak256(abi.encodePacked(token0, token1)),
-                hex'96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f' // init code hash
-            )))));
+        // pair = address(uint160(uint(keccak256(abi.encodePacked(
+        //         hex'ff',
+        //         factory,
+        //         keccak256(abi.encodePacked(token0, token1)),
+        //         hex'96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f' // init code hash
+        //     )))));
+        pair = UniswapV2Factory(factory).getPair(token0, token1);
+        console.log('pairFor returning', pair);
     }
 
     // fetches and sorts the reserves for a pair
     function getReserves(address factory, address tokenA, address tokenB) internal view returns (uint reserveA, uint reserveB) {
+        console.log('Library: getReserves beginning', factory, tokenA, tokenB);
         (address token0,) = sortTokens(tokenA, tokenB);
         (uint reserve0, uint reserve1,) = UniswapV2Pair(pairFor(factory, tokenA, tokenB)).getReserves();
         (reserveA, reserveB) = tokenA == token0 ? (reserve0, reserve1) : (reserve1, reserve0);
+        console.log('Library: getReserves returning', reserveA, reserveB);
     }
 
     // given some amount of an asset and pair reserves, returns an equivalent amount of the other asset
@@ -40,7 +47,8 @@ library UniswapV2Library {
     }
 
     // given an input amount of an asset and pair reserves, returns the maximum output amount of the other asset
-    function getAmountOut(uint amountIn, uint reserveIn, uint reserveOut) internal pure returns (uint amountOut) {
+    function getAmountOut(uint amountIn, uint reserveIn, uint reserveOut) internal view returns (uint amountOut) {
+        console.log('getAmountOut', amountIn, reserveIn, reserveOut);
         require(amountIn > 0, 'UniswapV2Library: INSUFFICIENT_INPUT_AMOUNT');
         require(reserveIn > 0 && reserveOut > 0, 'UniswapV2Library: INSUFFICIENT_LIQUIDITY');
         uint amountInWithFee = amountIn.mul(997);
@@ -50,9 +58,10 @@ library UniswapV2Library {
     }
 
     // given an output amount of an asset and pair reserves, returns a required input amount of the other asset
-    function getAmountIn(uint amountOut, uint reserveIn, uint reserveOut) internal pure returns (uint amountIn) {
+    function getAmountIn(uint amountOut, uint reserveIn, uint reserveOut) internal view returns (uint amountIn) {
         require(amountOut > 0, 'UniswapV2Library: INSUFFICIENT_OUTPUT_AMOUNT');
         require(reserveIn > 0 && reserveOut > 0, 'UniswapV2Library: INSUFFICIENT_LIQUIDITY');
+        console.log('getAmountIn', amountOut, reserveIn, reserveOut);
         uint numerator = reserveIn.mul(amountOut).mul(1000);
         uint denominator = reserveOut.sub(amountOut).mul(997);
         amountIn = (numerator / denominator).add(1);
@@ -60,6 +69,7 @@ library UniswapV2Library {
 
     // performs chained getAmountOut calculations on any number of pairs
     function getAmountsOut(address factory, uint amountIn, address[] memory path) internal view returns (uint[] memory amounts) {
+        console.log('getAmountsOut', factory, amountIn);
         require(path.length >= 2, 'UniswapV2Library: INVALID_PATH');
         amounts = new uint[](path.length);
         amounts[0] = amountIn;

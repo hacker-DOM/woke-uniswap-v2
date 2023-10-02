@@ -1,5 +1,6 @@
 import sys
 import typing
+from contextlib import contextmanager
 
 from woke.testing import *
 from woke.testing import default_chain as chain
@@ -18,6 +19,20 @@ sys.excepthook = lambda *args: ipdb.pm()
 #         print(e.tx.call_trace)
 #         print(e.tx.console_logs)
 
+@contextmanager
+def snapshot_and_revert_fix(chain: Chain):
+    # anvil bug, need to put the timestamp back where it was, snapshot_revert doesn't correctly restore ts
+    # when this ticket is closed, we can remove this block and just use snapshot_and_revert decorator
+    # https://github.com/foundry-rs/foundry/issues/5518
+    ts = chain.blocks[-1].timestamp
+    with chain.snapshot_and_revert():
+        yield
+    chain.set_next_block_timestamp(ts + 1)
+
+import pathlib
+csv = pathlib.Path('gitignore/flows_and_txns.csv')
+# this overwrites the file
+_ = csv.write_text('sequence_number,flow_number,flow_name,block_number,block_timestamp,from,to,return_value,events,console_logs\n')
 def tx_callback(tx: TransactionAbc):
     print("\n")
     print(f"Trasaction console logs: {tx.console_logs}")
@@ -26,6 +41,8 @@ def tx_callback(tx: TransactionAbc):
     print(f"Trasaction events: {tx.events}")
     print(tx.events)
     print("\n")
+    with open(csv, 'a') as f:
+        f.write(f",,,{tx.block_number},{tx.block.timestamp},{tx.from_},{tx.to},{tx.return_value},{tx.events},{tx.console_logs}\n")
 
 # launch a new development chain (Anvil)
 @chain.connect()
@@ -63,12 +80,34 @@ def main():
     acc_token0.mint(acc_bob, 100 * 10 ** 18)
     acc_token1.mint(acc_bob, 100 * 10 ** 18)
 
-    with chain.snapshot_and_revert():
-        acc_router.swapExactTokensForTokens(
+    with snapshot_and_revert_fix(chain):
+        acc_token0.approve(acc_router, 2 ** 256 - 1)
+        tx0 = acc_router.swapExactTokensForTokens(
             10 * 10 ** 18,
             0,
             [acc_token0, acc_token1],
             acc_bob,
             2 ** 256 - 1,
         )
+    
+    with snapshot_and_revert_fix(chain):
+        acc_token0.approve(acc_router, 2 ** 256 - 1)
+        tx1 = acc_router.swapExactTokensForTokens(
+            5 * 10 ** 18,
+            0,
+            [acc_token0, acc_token1],
+            acc_bob,
+            2 ** 256 - 1,
+        )
+        tx2 = acc_router.swapExactTokensForTokens(
+            5 * 10 ** 18,
+            0,
+            [acc_token0, acc_token1],
+            acc_bob,
+            2 ** 256 - 1,
+        )
+
+    print("tx0.return_value", tx0.return_value)
+    print("tx1.return_value", tx1.return_value)
+    print("tx2.return_value", tx2.return_value)
 

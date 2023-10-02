@@ -211,8 +211,10 @@ contract UniswapV2Router02 {
     // **** SWAP ****
     // requires the initial amount to have already been sent to the first pair
     function _swap(uint[] memory amounts, address[] memory path, address _to) internal virtual {
+        console.log("swap");
         for (uint i; i < path.length - 1; i++) {
             (address input, address output) = (path[i], path[i + 1]);
+            console.log("input", input, "output", output);
             (address token0,) = UniswapV2Library.sortTokens(input, output);
             uint amountOut = amounts[i + 1];
             (uint amount0Out, uint amount1Out) = input == token0 ? (uint(0), amountOut) : (amountOut, uint(0));
@@ -221,6 +223,7 @@ contract UniswapV2Router02 {
                 amount0Out, amount1Out, to, new bytes(0)
             );
         }
+        console.log("swap ending");
     }
     function swapExactTokensForTokens(
         uint amountIn,
@@ -404,7 +407,7 @@ contract UniswapV2Router02 {
 
     function getAmountOut(uint amountIn, uint reserveIn, uint reserveOut)
         public
-        pure
+        view
         virtual
         returns (uint amountOut)
     {
@@ -413,7 +416,7 @@ contract UniswapV2Router02 {
 
     function getAmountIn(uint amountOut, uint reserveIn, uint reserveOut)
         public
-        pure
+        view
         virtual
         returns (uint amountIn)
     {
