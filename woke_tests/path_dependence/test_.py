@@ -80,36 +80,75 @@ def main():
     acc_token0.mint(acc_bob, 100 * 10 ** 18)
     acc_token1.mint(acc_bob, 100 * 10 ** 18)
 
+    # with snapshot_and_revert_fix(chain):
+    #     acc_token1.approve(acc_router, 2 ** 256 - 1)
+    #     path1_tx1_fee = acc_router.swapExactTokensForTokens(
+    #         5 * 10 ** 18,
+    #         0,
+    #         [acc_token1, acc_token0],
+    #         acc_bob,
+    #         2 ** 256 - 1,
+    #     )
+    #     path1_tx2_fee = acc_router.swapExactTokensForTokens(
+    #         5 * 10 ** 18,
+    #         0,
+    #         [acc_token1, acc_token0],
+    #         acc_bob,
+    #         2 ** 256 - 1,
+    #     )
+    #
+    # with snapshot_and_revert_fix(chain):
+    #     acc_token1.approve(acc_router, 2 ** 256 - 1)
+    #     path2_tx1_no_fee = acc_router.swapExactTokensForTokens_noFee(
+    #         5 * 10 ** 18,
+    #         0,
+    #         [acc_token1, acc_token0],
+    #         acc_bob,
+    #         2 ** 256 - 1,
+    #     )
+    #     path2_tx2_fee = acc_router.swapExactTokensForTokens(
+    #         5 * 10 ** 18,
+    #         0,
+    #         [acc_token1, acc_token0],
+    #         acc_bob,
+    #         2 ** 256 - 1,
+    #     )
+    #
+    # print(f"path1_tx1_fee: {path1_tx1_fee.return_value}")
+    # print(f"path1_tx2_fee: {path1_tx2_fee.return_value}")
+    # print(f"path2_tx1_no_fee: {path2_tx1_no_fee.return_value}")
+    # print(f"path2_tx2_fee: {path2_tx2_fee.return_value}")
+
     with snapshot_and_revert_fix(chain):
-        acc_token0.approve(acc_router, 2 ** 256 - 1)
-        path1_tx1_fee = acc_router.swapExactTokensForTokens(
-            5 * 10 ** 18,
-            0,
-            [acc_token0, acc_token1],
+        acc_token1.approve(acc_router, 2 ** 256 - 1)
+        path1_tx1_fee = acc_router.swapTokensForExactTokens(
+            3333333333333333333,
+            2 ** 256 - 1,
+            [acc_token1, acc_token0],
             acc_bob,
             2 ** 256 - 1,
         )
-        path1_tx2_fee = acc_router.swapExactTokensForTokens(
-            5 * 10 ** 18,
-            0,
-            [acc_token0, acc_token1],
+        path1_tx2_fee = acc_router.swapTokensForExactTokens(
+            3333333333333333333,
+            2 ** 256 - 1,
+            [acc_token1, acc_token0],
             acc_bob,
             2 ** 256 - 1,
         )
 
     with snapshot_and_revert_fix(chain):
-        acc_token0.approve(acc_router, 2 ** 256 - 1)
-        path2_tx1_no_fee = acc_router.swapExactTokensForTokens_noFee(
-            5 * 10 ** 18,
-            0,
-            [acc_token0, acc_token1],
+        acc_token1.approve(acc_router, 2 ** 256 - 1)
+        path2_tx1_no_fee = acc_router.swapTokensForExactTokens_noFee(
+            3333333333333333333,
+            2 ** 256 - 1,
+            [acc_token1, acc_token0],
             acc_bob,
             2 ** 256 - 1,
         )
-        path2_tx2_fee = acc_router.swapExactTokensForTokens(
-            5 * 10 ** 18,
-            0,
-            [acc_token0, acc_token1],
+        path2_tx2_fee = acc_router.swapTokensForExactTokens(
+            3333333333333333333,
+            2 ** 256 - 1,
+            [acc_token1, acc_token0],
             acc_bob,
             2 ** 256 - 1,
         )
@@ -118,6 +157,7 @@ def main():
     print(f"path1_tx2_fee: {path1_tx2_fee.return_value}")
     print(f"path2_tx1_no_fee: {path2_tx1_no_fee.return_value}")
     print(f"path2_tx2_fee: {path2_tx2_fee.return_value}")
+
 
     # with snapshot_and_revert_fix(chain):
     #     acc_token0.approve(acc_router, 2 ** 256 - 1)
