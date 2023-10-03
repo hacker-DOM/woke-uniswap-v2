@@ -82,24 +82,31 @@ def main():
 
     with snapshot_and_revert_fix(chain):
         acc_token0.approve(acc_router, 2 ** 256 - 1)
-        tx0 = acc_router.swapExactTokensForTokens(
-            10 * 10 ** 18,
+        path1_tx1_fee = acc_router.swapExactTokensForTokens(
+            5 * 10 ** 18,
             0,
             [acc_token0, acc_token1],
             acc_bob,
             2 ** 256 - 1,
         )
-    
+        path1_tx2_fee = acc_router.swapExactTokensForTokens(
+            5 * 10 ** 18,
+            0,
+            [acc_token0, acc_token1],
+            acc_bob,
+            2 ** 256 - 1,
+        )
+
     with snapshot_and_revert_fix(chain):
         acc_token0.approve(acc_router, 2 ** 256 - 1)
-        tx1 = acc_router.swapExactTokensForTokens(
+        path2_tx1_no_fee = acc_router.swapExactTokensForTokens_noFee(
             5 * 10 ** 18,
             0,
             [acc_token0, acc_token1],
             acc_bob,
             2 ** 256 - 1,
         )
-        tx2 = acc_router.swapExactTokensForTokens(
+        path2_tx2_fee = acc_router.swapExactTokensForTokens(
             5 * 10 ** 18,
             0,
             [acc_token0, acc_token1],
@@ -107,7 +114,39 @@ def main():
             2 ** 256 - 1,
         )
 
-    print("tx0.return_value", tx0.return_value)
-    print("tx1.return_value", tx1.return_value)
-    print("tx2.return_value", tx2.return_value)
+    print(f"path1_tx1_fee: {path1_tx1_fee.return_value}")
+    print(f"path1_tx2_fee: {path1_tx2_fee.return_value}")
+    print(f"path2_tx1_no_fee: {path2_tx1_no_fee.return_value}")
+    print(f"path2_tx2_fee: {path2_tx2_fee.return_value}")
 
+    # with snapshot_and_revert_fix(chain):
+    #     acc_token0.approve(acc_router, 2 ** 256 - 1)
+    #     tx0 = acc_router.swapExactTokensForTokens(
+    #         10 * 10 ** 18,
+    #         0,
+    #         [acc_token0, acc_token1],
+    #         acc_bob,
+    #         2 ** 256 - 1,
+    #     )
+    #
+    # with snapshot_and_revert_fix(chain):
+    #     acc_token0.approve(acc_router, 2 ** 256 - 1)
+    #     tx1 = acc_router.swapExactTokensForTokens(
+    #         5 * 10 ** 18,
+    #         0,
+    #         [acc_token0, acc_token1],
+    #         acc_bob,
+    #         2 ** 256 - 1,
+    #     )
+    #     tx2 = acc_router.swapExactTokensForTokens(
+    #         5 * 10 ** 18,
+    #         0,
+    #         [acc_token0, acc_token1],
+    #         acc_bob,
+    #         2 ** 256 - 1,
+    #     )
+    #
+    # print("tx0.return_value", tx0.return_value)
+    # print("tx1.return_value", tx1.return_value)
+    # print("tx2.return_value", tx2.return_value)
+    #
